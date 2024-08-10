@@ -156,47 +156,60 @@ void Begode::Hardware::processLEDs()
         case LED_Mode::OFF: this->ledModeOff(); break;
         default: break;
     }
+
     this->ledBraking();
+    this->ledStopLight();
     WS28XX_Update(&this->LEDStrip);
 }
 
-void Begode::Hardware::ledModeRainbow()
+void Begode::Hardware::ledBraking()
 {
-    static uint16_t LEDStarter = 0U;
+    static uint32_t lastSwitch = 0;
+    static bool bBrakeState = true;
+    uint32_t now = HAL_GetTick();
+    uint32_t delay = now - lastSwitch;
 
-    for (uint16_t hue = LEDStarter, i = 0; i < NUM_LEDS_TOTAL; i++, hue += Settings::iRainbowAddHue)
+    if (((this->wheelData.acceleration < BRAKE_LIGHT_ACCELERATION_THRESHOLD) && (this->wheelData.prevAbsSpeed > 2.f)) || (this->wheelData.bIsBraking && (this->wheelData.absSpeed < this->wheelData.prevAbsSpeed)))
     {
-        Color::RGBColor color = Color::HSVColor(hue, 255, 255).toRGB();
-        WS28XX_SetPixel_RGB(&this->LEDStrip, i, color.red, color.green, color.blue);
-    }
+        this->wheelData.bIsBraking = true;
 
-    if (this->wheelData.absSpeed > 2.f)
+        for (uint16_t i = 0; i < Settings::iNumLEDsForBraking; ++i)
+            WS28XX_SetPixel_RGB(&this->LEDStrip, i, (bBrakeState ? 255 : 0), 0, 0);
+
+        if (delay >= BRAKE_BLINK_DELAY)
+        {
+            bBrakeState = !bBrakeState;
+            lastSwitch = now;
+        }
+    }
+    else
     {
-        for (uint8_t i = 0; i < NUM_BACK_LEDS; ++i)
-            WS28XX_SetPixel_RGB(&this->LEDStrip, i, 128, 0, 0);
+        this->wheelData.bIsBraking = false;
+        bBrakeState = true;
     }
-
-    int addStarter = std::round(this->wheelData.speed * 1.5f);
-    if (std::abs(addStarter) < MIN_RAINBOW_SPEED)
-        addStarter = (this->wheelData.speed >= 0.f) ? MIN_RAINBOW_SPEED : -MIN_RAINBOW_SPEED;
-
-    LEDStarter += addStarter;
 }
 
-void Begode::Hardware::ledModeOff()
+void Begode::Hardware::ledStopLight()
 {
+    if (!Settings::iNumStopLedsTotal || this->wheelData.bIsBraking)
+        return;
+
     if (this->wheelData.absSpeed > 2.f)
     {
-        for (uint8_t i = 0; i < NUM_BACK_LEDS; ++i)
+        for (uint16_t i = 0; i < Settings::iNumStopLedsTotal; ++i)
             WS28XX_SetPixel_RGB(&this->LEDStrip, i, 128, 0, 0);
     }
     else
     {
+#if RAINBOW_STOP_LIGHT
+        if (this->wheelData.ledMode == LED_Mode::RAINBOW)
+            return;
+#endif
         float brightness = std::abs(((HAL_GetTick() % 4001) * 0.0005f) - 1.f);
 
         if (this->wheelData.battery > 80)
         {
-            for (uint8_t i = 0; i < NUM_BACK_LEDS; ++i)
+            for (uint16_t i = 0; i < NUM_STOP_LEDS_MAIN; ++i)
                 WS28XX_SetPixel_RGB(&this->LEDStrip, i, 0, 0, std::round(255.f * brightness));
         }
         else if (this->wheelData.battery > 60)
@@ -233,41 +246,36 @@ void Begode::Hardware::ledModeOff()
         }
         else
         {
-            for (uint8_t i = 0; i < NUM_BACK_LEDS; ++i)
+            for (uint16_t i = 0; i < NUM_STOP_LEDS_MAIN; ++i)
                 WS28XX_SetPixel_RGB(&this->LEDStrip, i, 0, 0, 0);
         }
-    }
 
-    for (uint8_t i = NUM_BACK_LEDS; i < NUM_LEDS_TOTAL; ++i)
-        WS28XX_SetPixel_RGB(&this->LEDStrip, i, 0, 0, 0);
+        for (uint16_t i = NUM_STOP_LEDS_MAIN; i < Settings::iNumStopLedsTotal; ++i)
+            WS28XX_SetPixel_RGB(&this->LEDStrip, i, 128, 0, 0);
+    }
 }
 
-void Begode::Hardware::ledBraking()
+void Begode::Hardware::ledModeRainbow()
 {
-    static uint32_t lastSwitch = 0;
-    static bool bBrakeState = true;
-    static bool bBraking = false;
-    uint32_t now = HAL_GetTick();
-    uint32_t delay = now - lastSwitch;
+    static uint16_t LEDStarter = 0U;
 
-    if (((this->wheelData.acceleration < BRAKE_LIGHT_ACCELERATION_THRESHOLD) && (this->wheelData.prevAbsSpeed > 2.f)) || (bBraking && (this->wheelData.absSpeed < this->wheelData.prevAbsSpeed)))
+    for (uint16_t hue = LEDStarter, i = 0; i < NUM_LEDS_TOTAL; i++, hue += Settings::iRainbowAddHue)
     {
-        bBraking = true;
-
-        for (uint16_t i = 0; i < Settings::iNumLEDsForBraking; ++i)
-            WS28XX_SetPixel_RGB(&this->LEDStrip, i, (bBrakeState ? 255 : 0), 0, 0);
-
-        if (delay >= BRAKE_BLINK_DELAY)
-        {
-            bBrakeState = !bBrakeState;
-            lastSwitch = now;
-        }
+        Color::RGBColor color = Color::HSVColor(hue, 255, 255).toRGB();
+        WS28XX_SetPixel_RGB(&this->LEDStrip, i, color.red, color.green, color.blue);
     }
-    else
-    {
-        bBraking = false;
-        bBrakeState = true;
-    }
+
+    int addStarter = std::round(this->wheelData.speed * RAINBOW_SPEED_MULTIPLIER);
+    if (std::abs(addStarter) < MIN_RAINBOW_SPEED)
+        addStarter = (this->wheelData.speed >= 0.f) ? MIN_RAINBOW_SPEED : -MIN_RAINBOW_SPEED;
+
+    LEDStarter += addStarter;
+}
+
+void Begode::Hardware::ledModeOff()
+{
+    for (uint8_t i = Settings::iNumStopLedsTotal; i < NUM_LEDS_TOTAL; ++i)
+        WS28XX_SetPixel_RGB(&this->LEDStrip, i, 0, 0, 0);
 }
 
 void Begode::WheelData::update(const Frame_00* pFrame_00)

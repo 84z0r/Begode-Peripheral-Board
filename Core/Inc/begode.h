@@ -72,6 +72,7 @@ namespace Begode
         unsigned long prevTime;
         unsigned long timeDelta;
         unsigned long lastMovingTime;
+        bool bIsBraking;
         uint8_t battery;
         uint8_t pedalsMode;
         LED_Mode ledMode;
@@ -95,6 +96,7 @@ namespace Begode
         void processLightPWM() const;
         void processCooler() const;
         void processLEDs();
+        void ledStopLight();
         void ledModeOff();
         void ledModeRainbow();
         void ledBraking();
