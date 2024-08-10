@@ -77,6 +77,8 @@ includeDirectories:
   - Src/**
   - Core/Src/**
   - Core/Lib/**
+  - Libs/**
+  - Main/**
   - C:\Users\zserg\AppData\Roaming\VSCodium\User\globalStorage\bmd.stm32-for-vscode\@xpack-dev-tools\arm-none-eabi-gcc\13.2.1-1.1.1\.content\arm-none-eabi\include\c++\13.2.1\arm-none-eabi
 
 
@@ -89,7 +91,8 @@ sourceFiles:
   - Src/**
   - Core/Src/**
   - Core/Lib/**
-
+  - Libs/**
+  - Main/**
 
 # When no makefile is present it will show a warning pop-up.
 # However when compilation without the CubeMX Makefile is desired, this can be turned of.

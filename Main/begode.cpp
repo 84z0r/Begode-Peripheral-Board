@@ -153,6 +153,7 @@ void Begode::Hardware::processLEDs()
     switch (this->wheelData.ledMode)
     {
         case LED_Mode::RAINBOW: this->ledModeRainbow(); break;
+        case LED_Mode::WHITE_RED: this->ledModeWhiteRed(); break;
         case LED_Mode::OFF: this->ledModeOff(); break;
         default: break;
     }
@@ -259,7 +260,7 @@ void Begode::Hardware::ledModeRainbow()
 {
     static uint16_t LEDStarter = 0U;
 
-    for (uint16_t hue = LEDStarter, i = 0; i < NUM_LEDS_TOTAL; i++, hue += Settings::iRainbowAddHue)
+    for (uint16_t hue = LEDStarter, i = Settings::iRainbowStart; i < NUM_LEDS_TOTAL; i++, hue += Settings::iRainbowAddHue)
     {
         Color::RGBColor color = Color::HSVColor(hue, 255, 255).toRGB();
         WS28XX_SetPixel_RGB(&this->LEDStrip, i, color.red, color.green, color.blue);
@@ -272,9 +273,18 @@ void Begode::Hardware::ledModeRainbow()
     LEDStarter += addStarter;
 }
 
+void Begode::Hardware::ledModeWhiteRed()
+{
+    for (uint16_t i = Settings::iNumStopLedsTotal; i < Settings::iBackPartLeds; ++i)
+        WS28XX_SetPixel_RGB(&this->LEDStrip, i, 255, 0, 0);
+
+    for (uint16_t i = Settings::iBackPartLeds; i < NUM_LEDS_TOTAL; ++i)
+        WS28XX_SetPixel_RGB(&this->LEDStrip, i, 255, 255, 255);
+}
+
 void Begode::Hardware::ledModeOff()
 {
-    for (uint8_t i = Settings::iNumStopLedsTotal; i < NUM_LEDS_TOTAL; ++i)
+    for (uint16_t i = Settings::iNumStopLedsTotal; i < NUM_LEDS_TOTAL; ++i)
         WS28XX_SetPixel_RGB(&this->LEDStrip, i, 0, 0, 0);
 }
 

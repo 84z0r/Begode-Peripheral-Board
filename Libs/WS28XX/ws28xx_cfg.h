@@ -15,13 +15,15 @@
   *
   ******************************************************************************
   */
-/* Define to prevent recursive inclusion -------------------------------------*/
+  /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _NIMALTD_I_CUBE_WS28XX_CONF_H_
 #define _NIMALTD_I_CUBE_WS28XX_CONF_H_
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
+
+#include "settings.h"
 
 #define WS28XX_ORDER_RGB                        0
 #define WS28XX_ORDER_BGR                        1
@@ -32,12 +34,12 @@
 #define WS28XX_RTOS_CMSIS_V2                    2
 #define WS28XX_RTOS_THREADX                     3
 
-/**
-	MiddleWare name : NimaLTD.I-CUBE-WS28XX.3.0.0
-	MiddleWare fileName : NimaLTD.I-CUBE-WS28XX_conf.h
-*/
-/*---------- WS28XX_PIXEL_MAX  -----------*/
-#define WS28XX_PIXEL_MAX      53
+    /**
+        MiddleWare name : NimaLTD.I-CUBE-WS28XX.3.0.0
+        MiddleWare fileName : NimaLTD.I-CUBE-WS28XX_conf.h
+    */
+    /*---------- WS28XX_PIXEL_MAX  -----------*/
+#define WS28XX_PIXEL_MAX      NUM_LEDS_TOTAL
 
 /*---------- WS28XX_PULSE_LENGTH_NS  -----------*/
 #define WS28XX_PULSE_LENGTH_NS      1250
@@ -66,5 +68,5 @@
   * @}
   */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+  /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

@@ -40,6 +40,7 @@ namespace Begode
     enum class LED_Mode : uint8_t
     {
         RAINBOW,
+        WHITE_RED,
         OFF,
         NUM_MODES
     };
@@ -99,6 +100,7 @@ namespace Begode
         void ledStopLight();
         void ledModeOff();
         void ledModeRainbow();
+        void ledModeWhiteRed();
         void ledBraking();
 
     private:
