@@ -3,7 +3,7 @@
 #include "wheels.h"
 
 //Model
-#define WHEEL_MODEL CUSTOM
+#define WHEEL_MODEL MSX_MSP_RS
 
 //Model Specific
 #if WHEEL_MODEL == CUSTOM
