@@ -21,7 +21,7 @@
 #define NUM_STOP_LEDS_MAIN 5
 #define NUM_STOP_LEDS_SECONDARY 18
 #define NUM_BRAKE_LEDS 15
-#elif WHEEL_MODE == MSX_OLD //without leds around the stop light, so total LEDS: 5+15+15=35
+#elif WHEEL_MODEL == MSX_OLD //without leds around the stop light, so total LEDS: 5+15+15=35
 #define NUM_LEDS_TOTAL 35
 #define NUM_STOP_LEDS_MAIN 5
 #define NUM_STOP_LEDS_SECONDARY 0
