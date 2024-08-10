@@ -2,7 +2,7 @@
 #include "tools.h"
 #include "usart.h"
 #include "color.h"
-#include <cstring>
+#include "string.h"
 
 const uint8_t frame00_Pattern[BEGODE_FRAME_SIZE] = { 0x55, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5A, 0x5A, 0x5A, 0x5A };
 const uint8_t frame04_Pattern[BEGODE_FRAME_SIZE] = { 0x55, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x5A, 0x5A, 0x5A, 0x5A };
@@ -62,7 +62,7 @@ bool Begode::Hardware::dataUpdate(uint16_t Size)
     uint8_t* pFrameEnd = std::max(reinterpret_cast<uint8_t*>(pFrame_00), reinterpret_cast<uint8_t*>(pFrame_04)) + BEGODE_FRAME_SIZE;
     uint8_t* pDataEnd = this->rx_buf + dataSize;
     size_t sizeLeft = pDataEnd - pFrameEnd;
-    if (sizeLeft) std::memmove(this->rx_buf, pFrameEnd, sizeLeft);
+    if (sizeLeft) memcpy(this->rx_buf, pFrameEnd, sizeLeft);
     dataSize = sizeLeft;
 
     return true;

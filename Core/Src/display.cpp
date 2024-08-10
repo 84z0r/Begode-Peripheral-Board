@@ -8,8 +8,11 @@
 #define DRAW_BRIGHTNESS         0x88
 #define SYSTICK_LOAD (SystemCoreClock/1000000U)
 
-const uint8_t digToSegment[10] =
+const uint8_t digToSegment[13] =
 {
+    0b10000001, //-
+    0b10000000, //.
+    0b10000000, ///
     0b11111110, //0
     0b10110000, //1
     0b11101101, //2
@@ -152,16 +155,16 @@ Begode::DisplayData::DisplayData() :
 
 void Begode::DisplayData::setTemp(float temp)
 {
-    int iTemp = std::round(temp * 10.f); //TODO: Check negative temp
+    int iTemp = std::round(temp * 10.f);
     char s[16] = { 0 };
     int written = snprintf(s, sizeof(s), "%03d", iTemp);
 
     if (written < 3)
         return;
 
-    this->seg_temp_0 = digToSegment[s[written - 3] - '0'];
-    this->seg_temp_1 = digToSegment[s[written - 2] - '0'];
-    this->seg_temp_2 = digToSegment[s[written - 1] - '0'];
+    this->seg_temp_0 = digToSegment[s[written - 3] - '-'];
+    this->seg_temp_1 = digToSegment[s[written - 2] - '-'];
+    this->seg_temp_2 = digToSegment[s[written - 1] - '-'];
 }
 
 void Begode::DisplayData::setTotal(float total)
@@ -173,12 +176,12 @@ void Begode::DisplayData::setTotal(float total)
     if (written < 6)
         return;
 
-    this->seg_total_0 = digToSegment[s[written - 6] - '0'];
-    this->seg_total_1 = digToSegment[s[written - 5] - '0'];
-    this->seg_total_2 = digToSegment[s[written - 4] - '0'];
-    this->seg_total_3 = digToSegment[s[written - 3] - '0'];
-    this->seg_total_4 = digToSegment[s[written - 2] - '0'];
-    this->seg_total_5 = digToSegment[s[written - 1] - '0'];
+    this->seg_total_0 = digToSegment[s[written - 6] - '-'];
+    this->seg_total_1 = digToSegment[s[written - 5] - '-'];
+    this->seg_total_2 = digToSegment[s[written - 4] - '-'];
+    this->seg_total_3 = digToSegment[s[written - 3] - '-'];
+    this->seg_total_4 = digToSegment[s[written - 2] - '-'];
+    this->seg_total_5 = digToSegment[s[written - 1] - '-'];
 }
 
 void Begode::DisplayData::setSpeed(unsigned int speed)
@@ -189,8 +192,8 @@ void Begode::DisplayData::setSpeed(unsigned int speed)
     if (written < 2)
         return;
 
-    this->seg_speed_0 = digToSegment[s[written - 2] - '0'];
-    this->seg_speed_1 = digToSegment[s[written - 1] - '0'];
+    this->seg_speed_0 = digToSegment[s[written - 2] - '-'];
+    this->seg_speed_1 = digToSegment[s[written - 1] - '-'];
 }
 
 void Begode::DisplayData::setCharge(uint8_t charge)
