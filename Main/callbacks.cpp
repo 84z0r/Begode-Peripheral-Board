@@ -8,13 +8,9 @@ void Setup()
     Hardware.onSetup();
 }
 
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef* huart, uint16_t Size)
+void Loop()
 {
-    Hardware.onRxEventCallback(Size);
+    Hardware.onLoop();
 }
 
-void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef* htim)
-{
-    Hardware.processLightPWM();
-    Hardware.processLEDs();
-}
+//No callbacks for now...

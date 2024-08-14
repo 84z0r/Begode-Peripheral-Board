@@ -67,7 +67,7 @@ namespace Begode
         float prevAbsSpeed;
         float acceleration;
         float temperature;
-        float hardwarePWM;
+        //float hardwarePWM;
         float total_distance;
         unsigned long nowTime;
         unsigned long prevTime;
@@ -90,12 +90,14 @@ namespace Begode
         WheelData wheelData;
 
         void onSetup();
-        void onRxEventCallback(uint16_t Size);
-        bool dataUpdate(uint16_t Size);
+        void onLoop();
+
+    private:
+        bool dataUpdate();
         void processDisplay();
         void processLight();
-        void processLightPWM() const;
         void processCooler() const;
+        void processLightPWM() const;
         void processLEDs();
         void ledStopLight();
         void ledModeOff();
@@ -103,12 +105,16 @@ namespace Begode
         void ledModeWhiteRed();
         void ledBraking();
 
-    private:
-        uint8_t rx_buf[1024];
+        uint8_t rx_buf[UART_DATA_PROCESS_BUFFER_SIZE];
+        uint8_t circularBuffer[UART_CIRCULAR_BUFFER_SIZE];
         Display display;
         DisplayData displayData;
         WS28XX_HandleTypeDef LEDStrip;
-        size_t dataSize;
+        uint32_t lastCNDTR;
+        uint32_t ledTick;
+        uint32_t lastLedTick;
+        uint16_t dataSize;
+        uint16_t ledDelay;
         uint16_t targetDuty;
     };
 

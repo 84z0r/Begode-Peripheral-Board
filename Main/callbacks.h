@@ -5,6 +5,7 @@ extern "C" {
 #endif
 
     void Setup();
+    void Loop();
 
 #ifdef __cplusplus
 }
