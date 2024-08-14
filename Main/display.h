@@ -35,6 +35,7 @@ namespace Begode
     {
     public:
         Display();
+        void onSetup();
         void update(const DisplayData* data);
         void setBrightness(uint8_t value); //0 - 7
     private:

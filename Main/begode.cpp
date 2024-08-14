@@ -22,6 +22,7 @@ void Begode::Hardware::onSetup()
     HAL_UART_Receive_DMA(&huart1, this->circularBuffer, sizeof(this->circularBuffer));
     WS28XX_Init(&this->LEDStrip, &htim2, 72, TIM_CHANNEL_2, NUM_LEDS_TOTAL);
     HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+    this->display.onSetup();
 }
 
 void Begode::Hardware::onLoop()

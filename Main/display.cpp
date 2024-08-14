@@ -25,7 +25,9 @@ const uint8_t digToSegment[13] =
     0b11111011  //9
 };
 
-Begode::Display::Display() : m_pinCLK(GPIO_PIN_2), m_pinDIO(GPIO_PIN_3), m_pinCLK_grp(GPIOA), m_pinDIO_grp(GPIOA), m_brightness(7)
+Begode::Display::Display() : m_pinCLK(GPIO_PIN_2), m_pinDIO(GPIO_PIN_3), m_pinCLK_grp(GPIOA), m_pinDIO_grp(GPIOA), m_brightness(7) {}
+
+void Begode::Display::onSetup()
 {
     HAL_GPIO_WritePin(m_pinCLK_grp, m_pinCLK, GPIO_PIN_SET);
     HAL_GPIO_WritePin(m_pinDIO_grp, m_pinDIO, GPIO_PIN_SET);
@@ -213,5 +215,5 @@ void Begode::DisplayData::setBatteryPic(bool bEnable)
 
 void Begode::DisplayData::setPedalsMode(uint8_t mode)
 {
-    this->seg_pedals_mode = digToSegment[mode % 10];
+    this->seg_pedals_mode = digToSegment[(mode + 3) % sizeof(digToSegment)];
 }
