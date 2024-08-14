@@ -6,8 +6,11 @@
 - Back LEDs blink red while braking.
 - Highly customisable.
 
-You need USB-to-TTL adapter to flash it.
-- Connect 3.3V to VCC, GND to GND, RX (from adapter) to TX (on the board), TX (from adapter) to RX (on the board) and 3.3V to BOOT0.
-- Use STM32CubeProgrammer or stm32flash to flash the firmware.
+Download the latest firmware for your wheel model from the [Releases]([https://pages.github.com/](https://github.com/84z0r/Begode-Peripheral-Board/releases)) page.
+CUSTOM_FIRMWARE builds are **only** for Alexovik's custom firmware users!
+**Choose the regular build for the stock Begode firmware or Freestyler mods!**
 
-DO NOT use CUSTOM_FIRMWARE builds is you don't use Alexovik's custom firmware!
+You need USB-to-TTL adapter to flash it.
+1) Disconnect the 6pin cable from the board.
+2) Connect 3.3V to VCC, GND to GND, RX (from adapter) to TX (on the board), TX (from adapter) to RX (on the board) and 3.3V to BOOT0. It's better to connect BOOT0 first and VCC after that.
+3) Use STM32CubeProgrammer or stm32flash to flash the firmware.
