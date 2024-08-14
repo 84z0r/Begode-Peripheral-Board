@@ -16,6 +16,7 @@ uint8_t* Tools::FindPattern(const uint8_t* pStart, size_t searchSize, const uint
         }
         else
         {
+            if (pFind) i -= patternPos;
             patternPos = 0;
             pFind = nullptr;
         }
@@ -43,6 +44,7 @@ uint8_t* Tools::FindPatternLast(const uint8_t* pStart, size_t searchSize, const 
         }
         else
         {
+            if (pFind) i += patternSize - patternPos - 1;
             patternPos = patternSize - 1;
             pFind = nullptr;
         }
