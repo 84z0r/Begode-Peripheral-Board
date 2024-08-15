@@ -231,6 +231,7 @@ void Begode::Hardware::ledStopLight()
         if (this->wheelData.ledMode == LED_Mode::RAINBOW)
             return;
 #endif
+#if NUM_STOP_LEDS_MAIN
         float brightness = std::abs(((this->ledTick % 4001) * 0.0005f) - 1.f);
         Color::RGBColor color(std::round(BATTERY_CHARGE_COLOR_R * brightness), std::round(BATTERY_CHARGE_COLOR_G * brightness), std::round(BATTERY_CHARGE_COLOR_B * brightness));
 
@@ -276,7 +277,7 @@ void Begode::Hardware::ledStopLight()
             for (uint16_t i = 0; i < NUM_STOP_LEDS_MAIN; ++i)
                 WS28XX_SetPixel_RGB(&this->LEDStrip, i, 0, 0, 0);
         }
-
+#endif
         for (uint16_t i = NUM_STOP_LEDS_MAIN; i < Settings::iNumStopLedsTotal; ++i)
             WS28XX_SetPixel_RGB(&this->LEDStrip, i, 128, 0, 0);
     }

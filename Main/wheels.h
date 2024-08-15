@@ -5,3 +5,4 @@
 #define XM 2
 #define MSX_MSP_RS 3
 #define MSX_OLD 4
+#define EXN 5

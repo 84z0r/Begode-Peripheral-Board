@@ -36,6 +36,12 @@
 #define NUM_STOP_LEDS_SECONDARY 0
 #define NUM_BRAKE_LEDS 15
 #define NUM_BACK_HALF_LEDS 20
+#elif WHEEL_MODEL == EXN
+#define NUM_LEDS_TOTAL 14
+#define NUM_STOP_LEDS_MAIN 0
+#define NUM_STOP_LEDS_SECONDARY 14
+#define NUM_BRAKE_LEDS 0
+#define NUM_BACK_HALF_LEDS 14
 #endif
 
 //Custom Firmware
@@ -81,7 +87,8 @@ namespace Settings
     inline constexpr uint16_t iLightStillDuty = std::round(LIGHT_STILL_DUTY * 65535);
     inline constexpr uint16_t iLightMovingDuty = std::round(LIGHT_MOVING_DUTY * 65535);
     inline constexpr uint16_t iNumStopLedsTotal = NUM_STOP_LEDS_MAIN + NUM_STOP_LEDS_SECONDARY;
-    inline constexpr uint16_t iRainbowAddHue = (65535 / (NUM_LEDS_TOTAL - iNumStopLedsTotal));
+    inline constexpr uint16_t iNumMainLedsTotal = NUM_LEDS_TOTAL - iNumStopLedsTotal;
+    inline constexpr uint16_t iRainbowAddHue = iNumMainLedsTotal ? (65535 / (NUM_LEDS_TOTAL - iNumStopLedsTotal)) : (iNumStopLedsTotal < 9 ? (65535 / 9) : (65535 / iNumStopLedsTotal));
     inline constexpr uint16_t iNumLEDsForBraking = iNumStopLedsTotal + NUM_BRAKE_LEDS;
     inline constexpr uint16_t iRainbowStart = (RAINBOW_STOP_LIGHT ? 0 : Settings::iNumStopLedsTotal);
 }
