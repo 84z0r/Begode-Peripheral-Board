@@ -4,6 +4,11 @@
 #include "color.h"
 #include "string.h"
 
+#if CUSTOM_FIRMWARE
+#include "ee.h"
+const uint8_t frame01_Pattern[BEGODE_FRAME_SIZE] = { 0x55, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x5A, 0x5A, 0x5A, 0x5A };
+#endif
+
 const uint8_t frame00_Pattern[BEGODE_FRAME_SIZE] = { 0x55, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5A, 0x5A, 0x5A, 0x5A };
 const uint8_t frame04_Pattern[BEGODE_FRAME_SIZE] = { 0x55, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x5A, 0x5A, 0x5A, 0x5A };
 const uint8_t frame_Mask[BEGODE_FRAME_SIZE] = { 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF };
@@ -18,6 +23,11 @@ void Begode::Hardware::onSetup()
         DWT->CYCCNT = 0;
         DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
     }
+
+#if CUSTOM_FIRMWARE
+    EE_Init(&this->eeprom, sizeof(EEPROM));
+    EE_Read();
+#endif
 
     HAL_UART_Receive_DMA(&huart1, this->circularBuffer, sizeof(this->circularBuffer));
     WS28XX_Init(&this->LEDStrip, &htim2, 72, TIM_CHANNEL_2, NUM_LEDS_TOTAL);
@@ -73,11 +83,21 @@ bool Begode::Hardware::dataUpdate()
     Frame_00* pFrame_00 = reinterpret_cast<Frame_00*>(Tools::FindPatternLast(this->rx_buf, this->dataSize, frame00_Pattern, sizeof(frame00_Pattern), frame_Mask));
     Frame_04* pFrame_04 = reinterpret_cast<Frame_04*>(Tools::FindPatternLast(this->rx_buf, this->dataSize, frame04_Pattern, sizeof(frame04_Pattern), frame_Mask));
 
+#if CUSTOM_FIRMWARE
+    Frame_01* pFrame_01 = reinterpret_cast<Frame_01*>(Tools::FindPatternLast(this->rx_buf, this->dataSize, frame01_Pattern, sizeof(frame01_Pattern), frame_Mask));
+    if (!pFrame_00 && !pFrame_04 && !pFrame_01)
+        return false;
+#else
     if (!pFrame_00 && !pFrame_04)
         return false;
+#endif
 
     if (pFrame_00) this->wheelData.update(pFrame_00);
     if (pFrame_04) this->wheelData.update(pFrame_04);
+
+#if CUSTOM_FIRMWARE
+    if (pFrame_01) this->wheelData.update(pFrame_01);
+#endif
 
     uint8_t* pFrameEnd = std::max(reinterpret_cast<uint8_t*>(pFrame_00), reinterpret_cast<uint8_t*>(pFrame_04)) + BEGODE_FRAME_SIZE;
     uint8_t* pDataEnd = this->rx_buf + dataSize;
@@ -338,10 +358,27 @@ void Begode::WheelData::update(const Frame_00* pFrame_00)
 void Begode::WheelData::update(const Frame_04* pFrame_04)
 {
     this->total_distance = Tools::byteSwap(pFrame_04->totalDistance) * 0.001f;
+#if !CUSTOM_FIRMWARE
     this->pedalsMode = ((Tools::byteSwap(pFrame_04->settings) >> 13) % 3) + 1;
     this->ledMode = static_cast<LED_Mode>(pFrame_04->ledMode % static_cast<uint8_t>(LED_Mode::NUM_MODES));
     this->lightMode = static_cast<Light_Mode>(pFrame_04->lightMode % static_cast<uint8_t>(Light_Mode::NUM_MODES));
+#else
+    this->lightMode = Light_Mode::AUTO;
+#endif
 }
+
+#if CUSTOM_FIRMWARE
+void Begode::WheelData::update(const Frame_01* pFrame_01)
+{
+    this->prevPedalsMode = this->pedalsMode;
+    this->pedalsMode = (std::abs(pFrame_01->pedalsMode - 2) % 4) + 1;
+    if ((prevPedalsMode == 4) && (pedalsMode == 1))
+    {
+        ++this->ledMode;
+        EE_Write();
+    }
+}
+#endif
 
 uint8_t Begode::calc_battery(unsigned short voltage)
 {

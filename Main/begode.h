@@ -37,6 +37,22 @@ namespace Begode
         char _pad_43[5];
     };
 
+#if CUSTOM_FIRMWARE
+    struct __attribute__((__packed__)) Frame_01
+    {
+        char _pad_0[6];
+        int8_t pedalsMode;
+        char _pad_7[11];
+        uint8_t frameType_01;
+        char _pad_19[5];
+    };
+
+    struct EEPROM
+    {
+        uint8_t ledMode;
+    };
+#endif
+
     enum class LED_Mode : uint8_t
     {
         RAINBOW,
@@ -44,6 +60,15 @@ namespace Begode
         OFF,
         NUM_MODES
     };
+
+#if CUSTOM_FIRMWARE
+    inline LED_Mode operator++(LED_Mode& mode)
+    {
+        uint8_t lm = static_cast<uint8_t>(mode);
+        mode = static_cast<LED_Mode>(++lm % static_cast<uint8_t>(LED_Mode::NUM_MODES));
+        return mode;
+    }
+#endif
 
     enum class Light_Mode : uint8_t
     {
@@ -78,9 +103,13 @@ namespace Begode
         uint8_t pedalsMode;
         LED_Mode ledMode;
         Light_Mode lightMode;
-
+#if CUSTOM_FIRMWARE
+        uint8_t prevPedalsMode;
+        void update(const Frame_01* pFrame_01);
+#endif
         void update(const Frame_00* pFrame_00);
         void update(const Frame_04* pFrame_04);
+
     };
 
     class Hardware : public Singleton<Hardware>
@@ -116,6 +145,9 @@ namespace Begode
         uint16_t dataSize;
         uint16_t ledDelay;
         uint16_t targetDuty;
+#if CUSTOM_FIRMWARE
+        EEPROM eeprom;
+#endif
     };
 
     uint8_t calc_battery(unsigned short voltage);

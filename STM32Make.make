@@ -36,6 +36,7 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
+C:/Users/zserg/STM32Cube/Repository/Packs/NimaLTD/I-CUBE-EE/3.2.0/Middlewares/Third_Party/EE/ee.c \
 C:/Users/zserg/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.5/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c \
 C:/Users/zserg/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.5/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c \
 C:/Users/zserg/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.5/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c \
@@ -140,11 +141,13 @@ AS_INCLUDES = \
 # C includes
 C_INCLUDES =  \
 -IC:/Users/zserg/AppData/Roaming/VSCodium/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-tools/arm-none-eabi-gcc/13.2.1-1.1.1/.content/arm-none-eabi/include/c++/13.2.1/arm-none-eabi \
+-IC:/Users/zserg/STM32Cube/Repository//Packs/NimaLTD/I-CUBE-EE/3.2.0/Middlewares/Third_Party/EE \
 -IC:/Users/zserg/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.5/Drivers/CMSIS/Device/ST/STM32F1xx/Include \
 -IC:/Users/zserg/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.5/Drivers/CMSIS/Include \
 -IC:/Users/zserg/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.5/Drivers/STM32F1xx_HAL_Driver/Inc \
 -IC:/Users/zserg/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.5/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy \
 -ICore/Inc \
+-II-CUBE-EE \
 -ILibs/WS28XX \
 -IMain
 
