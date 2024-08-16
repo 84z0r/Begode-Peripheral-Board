@@ -25,8 +25,9 @@ void Begode::Hardware::onSetup()
     }
 
 #if CUSTOM_FIRMWARE
-    EE_Init(&this->eeprom, sizeof(EEPROM));
+    EE_Init(&this->wheelData.eeprom, sizeof(EEPROM));
     EE_Read();
+    this->wheelData.ledMode = this->wheelData.eeprom.ledMode;
 #endif
 
     HAL_UART_Receive_DMA(&huart1, this->circularBuffer, sizeof(this->circularBuffer));
@@ -374,7 +375,7 @@ void Begode::WheelData::update(const Frame_01* pFrame_01)
     this->pedalsMode = (std::abs(pFrame_01->pedalsMode - 2) % 4) + 1;
     if ((prevPedalsMode == 4) && (pedalsMode == 1))
     {
-        ++this->ledMode;
+        this->eeprom.ledMode = ++this->ledMode;
         EE_Write();
     }
 }

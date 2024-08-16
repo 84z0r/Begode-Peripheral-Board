@@ -46,11 +46,6 @@ namespace Begode
         uint8_t frameType_01;
         char _pad_19[5];
     };
-
-    struct EEPROM
-    {
-        uint8_t ledMode;
-    };
 #endif
 
     enum class LED_Mode : uint8_t
@@ -68,6 +63,11 @@ namespace Begode
         mode = static_cast<LED_Mode>(++lm % static_cast<uint8_t>(LED_Mode::NUM_MODES));
         return mode;
     }
+
+    struct EEPROM
+    {
+        LED_Mode ledMode;
+    };
 #endif
 
     enum class Light_Mode : uint8_t
@@ -104,6 +104,7 @@ namespace Begode
         LED_Mode ledMode;
         Light_Mode lightMode;
 #if CUSTOM_FIRMWARE
+        EEPROM eeprom;
         uint8_t prevPedalsMode;
         void update(const Frame_01* pFrame_01);
 #endif
@@ -145,9 +146,6 @@ namespace Begode
         uint16_t dataSize;
         uint16_t ledDelay;
         uint16_t targetDuty;
-#if CUSTOM_FIRMWARE
-        EEPROM eeprom;
-#endif
     };
 
     uint8_t calc_battery(unsigned short voltage);
