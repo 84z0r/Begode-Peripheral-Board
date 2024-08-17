@@ -374,7 +374,7 @@ void Begode::WheelData::update(const Frame_01* pFrame_01)
 {
     this->prevPedalsMode = this->pedalsMode;
     this->pedalsMode = (std::abs(pFrame_01->pedalsMode - 2) % 4) + 1;
-    if (this->pedalsMode < this->prevPedalsMode)
+    if ((this->prevPedalsMode == 4) && (this->pedalsMode == 1))
     {
         this->eeprom.ledMode = static_cast<uint8_t>(++this->ledMode);
         EE_Write();

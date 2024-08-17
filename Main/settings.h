@@ -83,7 +83,7 @@
 #ifdef __cplusplus
 namespace Settings
 {
-    inline constexpr uint16_t iMinLedDelay = std::ceil(NUM_LEDS_TOTAL * 0.03f);
+    inline constexpr uint16_t iMinLedDelay = std::ceil(NUM_LEDS_TOTAL * 0.033f);
     inline constexpr uint16_t iLightStillDuty = std::round(LIGHT_STILL_DUTY * 65535);
     inline constexpr uint16_t iLightMovingDuty = std::round(LIGHT_MOVING_DUTY * 65535);
     inline constexpr uint16_t iNumStopLedsTotal = NUM_STOP_LEDS_MAIN + NUM_STOP_LEDS_SECONDARY;
