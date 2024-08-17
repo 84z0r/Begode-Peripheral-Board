@@ -38,7 +38,7 @@ cFlags:
   - -fdata-sections
   - -ffunction-sections
 
-cxxFlags: [-fno-exceptions]
+cxxFlags: [-fno-exceptions, -std=c++23]
 assemblyFlags: 
   - -Wall
   - -fdata-sections

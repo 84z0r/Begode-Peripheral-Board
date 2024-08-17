@@ -5,6 +5,7 @@
 #include "string.h"
 
 #if CUSTOM_FIRMWARE
+#include <algorithm>
 #include "ee.h"
 const uint8_t frame01_Pattern[BEGODE_FRAME_SIZE] = { 0x55, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x5A, 0x5A, 0x5A, 0x5A };
 #endif
@@ -27,7 +28,7 @@ void Begode::Hardware::onSetup()
 #if CUSTOM_FIRMWARE
     EE_Init(&this->wheelData.eeprom, sizeof(EEPROM));
     EE_Read();
-    this->wheelData.ledMode = this->wheelData.eeprom.ledMode;
+    this->wheelData.ledMode = static_cast<LED_Mode>(this->wheelData.eeprom.ledMode % static_cast<uint8_t>(LED_Mode::NUM_MODES));
 #endif
 
     HAL_UART_Receive_DMA(&huart1, this->circularBuffer, sizeof(this->circularBuffer));
@@ -98,9 +99,11 @@ bool Begode::Hardware::dataUpdate()
 
 #if CUSTOM_FIRMWARE
     if (pFrame_01) this->wheelData.update(pFrame_01);
+    uint8_t* pFrameEnd = std::ranges::max({ reinterpret_cast<uint8_t*>(pFrame_00), reinterpret_cast<uint8_t*>(pFrame_04), reinterpret_cast<uint8_t*>(pFrame_01) }) + BEGODE_FRAME_SIZE;
+#else
+    uint8_t* pFrameEnd = std::max(reinterpret_cast<uint8_t*>(pFrame_00), reinterpret_cast<uint8_t*>(pFrame_04)) + BEGODE_FRAME_SIZE;
 #endif
 
-    uint8_t* pFrameEnd = std::max(reinterpret_cast<uint8_t*>(pFrame_00), reinterpret_cast<uint8_t*>(pFrame_04)) + BEGODE_FRAME_SIZE;
     uint8_t* pDataEnd = this->rx_buf + dataSize;
     size_t sizeLeft = pDataEnd - pFrameEnd;
     if (sizeLeft) memcpy(this->rx_buf, pFrameEnd, sizeLeft);
@@ -363,8 +366,6 @@ void Begode::WheelData::update(const Frame_04* pFrame_04)
     this->pedalsMode = ((Tools::byteSwap(pFrame_04->settings) >> 13) % 3) + 1;
     this->ledMode = static_cast<LED_Mode>(pFrame_04->ledMode % static_cast<uint8_t>(LED_Mode::NUM_MODES));
     this->lightMode = static_cast<Light_Mode>(pFrame_04->lightMode % static_cast<uint8_t>(Light_Mode::NUM_MODES));
-#else
-    this->lightMode = Light_Mode::AUTO;
 #endif
 }
 
@@ -373,9 +374,9 @@ void Begode::WheelData::update(const Frame_01* pFrame_01)
 {
     this->prevPedalsMode = this->pedalsMode;
     this->pedalsMode = (std::abs(pFrame_01->pedalsMode - 2) % 4) + 1;
-    if ((prevPedalsMode == 4) && (pedalsMode == 1))
+    if (this->pedalsMode < this->prevPedalsMode)
     {
-        this->eeprom.ledMode = ++this->ledMode;
+        this->eeprom.ledMode = static_cast<uint8_t>(++this->ledMode);
         EE_Write();
     }
 }

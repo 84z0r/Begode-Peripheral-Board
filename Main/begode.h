@@ -28,13 +28,13 @@ namespace Begode
         unsigned short settings;
         unsigned short powerOffTime;
         unsigned short tiltBackSpeed;
-        char _pad_36;
+        char _pad_12;
         uint8_t ledMode;
         uint8_t alert;
         uint8_t lightMode;
-        char _pad_40[2];
+        char _pad_16[2];
         uint8_t frameType_04;
-        char _pad_43[5];
+        char _pad_19[5];
     };
 
 #if CUSTOM_FIRMWARE
@@ -64,9 +64,9 @@ namespace Begode
         return mode;
     }
 
-    struct EEPROM
+    struct __attribute__((__packed__)) EEPROM
     {
-        LED_Mode ledMode;
+        uint8_t ledMode;
     };
 #endif
 

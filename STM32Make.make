@@ -168,7 +168,7 @@ endif
 # Add additional flags
 CFLAGS += -Wall -fdata-sections -ffunction-sections 
 ASFLAGS += -Wall -fdata-sections -ffunction-sections 
-CXXFLAGS += -fno-exceptions 
+CXXFLAGS += -fno-exceptions -std=c++23 
 
 # Generate dependency information
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"

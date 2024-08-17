@@ -3,15 +3,15 @@
 #include "wheels.h"
 
 //Model
-#define WHEEL_MODEL CUSTOM
+#define WHEEL_MODEL COMMANDER
 
 //Model Specific
 #if WHEEL_MODEL == CUSTOM
-#define NUM_LEDS_TOTAL 53
-#define NUM_STOP_LEDS_MAIN 5
-#define NUM_STOP_LEDS_SECONDARY 18
-#define NUM_BRAKE_LEDS 15
-#define NUM_BACK_HALF_LEDS 38
+#define NUM_LEDS_TOTAL 42
+#define NUM_STOP_LEDS_MAIN 0
+#define NUM_STOP_LEDS_SECONDARY 0
+#define NUM_BRAKE_LEDS 12
+#define NUM_BACK_HALF_LEDS 12
 #elif WHEEL_MODEL == COMMANDER
 #define NUM_LEDS_TOTAL 23
 #define NUM_STOP_LEDS_MAIN 5
@@ -45,7 +45,7 @@
 #endif
 
 //Custom Firmware
-#define CUSTOM_FIRMWARE 0
+#define CUSTOM_FIRMWARE 1
 
 //Front Light
 #define AUTO_LIGHT 1
