@@ -55,7 +55,6 @@
 #define LIGHT_MOVING_DUTY 1.0f //0.0f - 1.0f
 
 //LEDs
-#define RAINBOW_STOP_LIGHT 1 //if not moving and rainbow mode is enabled
 #define BATTERY_CHARGE_COLOR_R 0.f
 #define BATTERY_CHARGE_COLOR_G 0.f
 #define BATTERY_CHARGE_COLOR_B 255.f
@@ -90,6 +89,5 @@ namespace Settings
     inline constexpr uint16_t iNumMainLedsTotal = NUM_LEDS_TOTAL - iNumStopLedsTotal;
     inline constexpr uint16_t iRainbowAddHue = iNumMainLedsTotal ? (65535 / (NUM_LEDS_TOTAL - iNumStopLedsTotal)) : (iNumStopLedsTotal < 9 ? (65535 / 9) : (65535 / iNumStopLedsTotal));
     inline constexpr uint16_t iNumLEDsForBraking = iNumStopLedsTotal + NUM_BRAKE_LEDS;
-    inline constexpr uint16_t iRainbowStart = (RAINBOW_STOP_LIGHT ? 0 : Settings::iNumStopLedsTotal);
 }
 #endif
